@@ -89,6 +89,12 @@ SuperHearing/
 
 ## Getting Started
 
+### Terminal Environment
+For running CLI tools, Python scripts, and git workflows on Linux:
+- Use **Ptyxis** as the terminal emulator (instead of Konsole).
+- Ptyxis is configured as the default terminal (`ptyxis` command wrapper is available in `~/.local/bin/ptyxis`).
+- Any legacy invocations directed to `konsole` are automatically bridged to `ptyxis`.
+
 ### 1. Opening the Project
 Open `SuperHearing.xcodeproj` in Xcode 15.4 or newer on macOS:
 
