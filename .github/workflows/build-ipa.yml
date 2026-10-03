@@ -1,0 +1,124 @@
+name: Build SuperHearing IPA
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build & Archive iOS App
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Select Xcode Version
+        run: |
+          sudo xcode-select -s /Applications/Xcode_15.4.app || sudo xcode-select -s /Applications/Xcode.app
+          xcodebuild -version
+
+      - name: Cache Swift Package Dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            .build
+            ~/Library/Caches/org.swift.swiftpm
+            ~/Library/Developer/Xcode/DerivedData
+          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved', 'SuperHearing.xcodeproj/project.pbxproj') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
+
+      - name: Resolve SPM Dependencies
+        run: |
+          xcodebuild -project SuperHearing.xcodeproj -scheme SuperHearing -resolvePackageDependencies
+
+      - name: Check Code Signing Secrets
+        id: check_secrets
+        run: |
+          if [ -n "${{ secrets.APPLE_CERTIFICATE }}" ] && [ -n "${{ secrets.MOBILEPROVISION }}" ]; then
+            echo "HAS_SECRETS=true" >> $GITHUB_ENV
+          else
+            echo "HAS_SECRETS=false" >> $GITHUB_ENV
+            echo "::notice::Signing secrets not provided. Building unsigned simulator/generic build."
+          fi
+
+      - name: Install Apple Certificate and Provisioning Profile (Ad Hoc)
+        if: env.HAS_SECRETS == 'true'
+        env:
+          BUILD_CERTIFICATE_BASE64: ${{ secrets.APPLE_CERTIFICATE }}
+          P12_PASSWORD: ${{ secrets.APPLE_CERT_PASSWORD }}
+          BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.MOBILEPROVISION }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD || 'build_temp_keychain' }}
+        run: |
+          CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
+          PP_PATH=$RUNNER_TEMP/build_pp.mobileprovision
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+
+          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
+          echo -n "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode -o $PP_PATH
+
+          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+
+          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          security list-keychain -d user -s $KEYCHAIN_PATH
+          security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles/
+
+      - name: Build & Archive (Signed Ad Hoc)
+        if: env.HAS_SECRETS == 'true'
+        run: |
+          mkdir -p build/ipa
+          xcodebuild -project SuperHearing.xcodeproj \
+            -scheme SuperHearing \
+            -configuration Release \
+            -archivePath build/SuperHearing.xcarchive \
+            -destination "generic/platform=iOS" \
+            archive
+
+          xcodebuild -exportArchive \
+            -archivePath build/SuperHearing.xcarchive \
+            -exportPath build/ipa \
+            -exportOptionsPlist SuperHearing/Resources/ExportOptions.plist
+
+      - name: Build Unsigned Generic Archive / Test Build
+        if: env.HAS_SECRETS == 'false'
+        run: |
+          mkdir -p build/ipa
+          xcodebuild -project SuperHearing.xcodeproj \
+            -scheme SuperHearing \
+            -destination "generic/platform=iOS" \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
+      - name: Upload IPA Artifact
+        if: env.HAS_SECRETS == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: SuperHearing-AdHoc-IPA
+          path: build/ipa/*.ipa
+          retention-days: 90
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v') && env.HAS_SECRETS == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/ipa/*.ipa
+          name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,32 @@
+# Xcode
+.DS_Store
+*/.DS_Store
+build/
+DerivedData/
+*.xcuserstate
+project.xcworkspace/xcuserdata/
+*.xcuserdatad
+*.xcbkptlist
+
+# Swift Package Manager
+.build/
+Packages/
+Package.resolved
+
+# CoreML Model Packages & Checkpoints (Heavy binaries)
+*.mlpackage
+*.mlmodelc
+*.pth
+*.pt
+*.onnx
+
+# Python Virtual Environments
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Archives & IPAs
+*.xcarchive
+*.ipa
+*.dSYM.zip

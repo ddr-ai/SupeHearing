@@ -1,0 +1,633 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		3F759DD944238B1FF7A0D608 /* SuperHearingApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AB45018BC002E2A7FA7AF0F /* SuperHearingApp.swift */; };
+		047D837E486BD07C40B8AFAD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47A84B65809988F956E49A75 /* AppDelegate.swift */; };
+		0F1FD585477C545AEB0D1A50 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E8582A99EA7885A21949BD2 /* MainTabView.swift */; };
+		5C8982E8AAD9D0F21556AFAB /* RecordingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A758771C7C2C41DF5D2D07 /* RecordingView.swift */; };
+		DC415B02046B41EBD1E781DC /* FileListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4FCF3DC5EEC60E44A306830 /* FileListView.swift */; };
+		199CC5B5AC8F0D4E771F4D22 /* ProcessingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F45933AECA197577700E799B /* ProcessingView.swift */; };
+		FD8ABD860D41C4337BE6DEFF /* SeparationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3CD17182839C0D7B6955CF /* SeparationView.swift */; };
+		E936385C54B5B321FB800C3C /* StemMixerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2EE5949E698BA3278404FAE /* StemMixerView.swift */; };
+		82BFD3AD64500B6711E6B997 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84705F9C4DEDA531AD105C9 /* SettingsView.swift */; };
+		673717E6F17E70F9E8DFDC80 /* RecordingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB0DA62645C8E6074C991EA /* RecordingViewModel.swift */; };
+		FE9FC005845AE7CB08EE6080 /* FileListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7783407BF8928E136B1E0F29 /* FileListViewModel.swift */; };
+		E916E8CDE335283C92ED956C /* ProcessingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5042CB42749E5B1DD3241823 /* ProcessingViewModel.swift */; };
+		977F019633C07A007A434FA2 /* SeparationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B30AFF586E3E3E19B6BDD2C /* SeparationViewModel.swift */; };
+		0515DB1308B0AB34F1BE4A51 /* StemMixerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23BE41E2A8A90397BD2C292 /* StemMixerViewModel.swift */; };
+		3233F74D40E18E22CD833860 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38FC45AB210124875D5A6480 /* SettingsViewModel.swift */; };
+		9A54B557AE2E9C3CCC71E018 /* Stem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F4F795A113D79EFFD812399 /* Stem.swift */; };
+		15F48E1C9916FB9CD8157F40 /* AudioFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2B4B9ABAEA50C65B3B4D32A /* AudioFile.swift */; };
+		FB7B27D6CA50EAD315695EC6 /* SeparatedAudio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 601E606E1B76BB1F159AB498 /* SeparatedAudio.swift */; };
+		F9202511475645D0F4865975 /* RecordingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88875A11625C6AF94806E52 /* RecordingService.swift */; };
+		859B0775EF70BB717A8F2197 /* NoiseReductionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F47FE1A15ABA7D7353E6A72E /* NoiseReductionService.swift */; };
+		20B72EE24EBBA41E5B0A3D9A /* EnhancementService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F851BF0C65D8E14E02F8D5 /* EnhancementService.swift */; };
+		E2C8568274761F63930DD0AE /* SeparationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF0F8C64F809BEE41FDF483 /* SeparationService.swift */; };
+		7441E3EB879EF0A6C0F4CCD6 /* PlaybackService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98AB8A3D8AF2AB756DD73299 /* PlaybackService.swift */; };
+		2BCEC6FF2801AEA696E273A9 /* AudioBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512B128B53C7CE0030783AB1 /* AudioBuffer.swift */; };
+		1F3B2C968B8181097B2B8100 /* STFT.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0D000B3A4D636DA53A423D /* STFT.swift */; };
+		9BF767C63E593BE38E706BAA /* AGC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3405512F5E51974D537BF14B /* AGC.swift */; };
+		BA1D783D1078AD018C539BE0 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1757A82E9CD16FC736FF57ED /* Extensions.swift */; };
+		C0D8A9AF0B142DF3FFDE4CB4 /* SuperHearingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCC272174BD98EB4A0434218 /* SuperHearingTests.swift */; };
+		8AA4ADCEBBADBD0EE8212926 /* SuperHearingUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32AB0B7AC1D5CEDB2A9B6E4 /* SuperHearingUITests.swift */; };
+		A50F295CF7721455EB821B2A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = ED25B2D4C82C2AFF5F05934C /* Assets.xcassets */; };
+		3CE8F24423E388B211F9C493 /* AsyncAlgorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 0776ADF1DB4D239472FD27A8 /* AsyncAlgorithms */; };
+		383DA8D042D6FF6EF3AC8308 /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = 27B703D19FBDD8A25A6FB043 /* Collections */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		B77B4E5374FD4DA4EAE62841 /* SuperHearing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SuperHearing.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		347AC704696305F0D1A71F6C /* SuperHearingTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SuperHearingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		1AF68477667E134014615F6A /* SuperHearingUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SuperHearingUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6AB45018BC002E2A7FA7AF0F /* SuperHearingApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperHearingApp.swift; sourceTree = "<group>"; };
+		47A84B65809988F956E49A75 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		0E8582A99EA7885A21949BD2 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
+		94A758771C7C2C41DF5D2D07 /* RecordingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingView.swift; sourceTree = "<group>"; };
+		D4FCF3DC5EEC60E44A306830 /* FileListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileListView.swift; sourceTree = "<group>"; };
+		F45933AECA197577700E799B /* ProcessingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessingView.swift; sourceTree = "<group>"; };
+		4F3CD17182839C0D7B6955CF /* SeparationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeparationView.swift; sourceTree = "<group>"; };
+		E2EE5949E698BA3278404FAE /* StemMixerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StemMixerView.swift; sourceTree = "<group>"; };
+		D84705F9C4DEDA531AD105C9 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		4BB0DA62645C8E6074C991EA /* RecordingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingViewModel.swift; sourceTree = "<group>"; };
+		7783407BF8928E136B1E0F29 /* FileListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileListViewModel.swift; sourceTree = "<group>"; };
+		5042CB42749E5B1DD3241823 /* ProcessingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessingViewModel.swift; sourceTree = "<group>"; };
+		4B30AFF586E3E3E19B6BDD2C /* SeparationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeparationViewModel.swift; sourceTree = "<group>"; };
+		F23BE41E2A8A90397BD2C292 /* StemMixerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StemMixerViewModel.swift; sourceTree = "<group>"; };
+		38FC45AB210124875D5A6480 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
+		0F4F795A113D79EFFD812399 /* Stem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stem.swift; sourceTree = "<group>"; };
+		C2B4B9ABAEA50C65B3B4D32A /* AudioFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioFile.swift; sourceTree = "<group>"; };
+		601E606E1B76BB1F159AB498 /* SeparatedAudio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeparatedAudio.swift; sourceTree = "<group>"; };
+		E88875A11625C6AF94806E52 /* RecordingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingService.swift; sourceTree = "<group>"; };
+		F47FE1A15ABA7D7353E6A72E /* NoiseReductionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoiseReductionService.swift; sourceTree = "<group>"; };
+		52F851BF0C65D8E14E02F8D5 /* EnhancementService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnhancementService.swift; sourceTree = "<group>"; };
+		4BF0F8C64F809BEE41FDF483 /* SeparationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeparationService.swift; sourceTree = "<group>"; };
+		98AB8A3D8AF2AB756DD73299 /* PlaybackService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackService.swift; sourceTree = "<group>"; };
+		512B128B53C7CE0030783AB1 /* AudioBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioBuffer.swift; sourceTree = "<group>"; };
+		AD0D000B3A4D636DA53A423D /* STFT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = STFT.swift; sourceTree = "<group>"; };
+		3405512F5E51974D537BF14B /* AGC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AGC.swift; sourceTree = "<group>"; };
+		1757A82E9CD16FC736FF57ED /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		DCC272174BD98EB4A0434218 /* SuperHearingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperHearingTests.swift; sourceTree = "<group>"; };
+		E32AB0B7AC1D5CEDB2A9B6E4 /* SuperHearingUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperHearingUITests.swift; sourceTree = "<group>"; };
+		ED25B2D4C82C2AFF5F05934C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		05AF569D196A4524E32A4749 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		14F8A4D65912422A77CEE7EB /* SuperHearing.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SuperHearing.entitlements; sourceTree = "<group>"; };
+		A9483E4B9E226B99B595E4CE /* ExportOptions.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = ExportOptions.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		C31F5592C6059C7B8DFE377C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3CE8F24423E388B211F9C493 /* AsyncAlgorithms in Frameworks */,
+				383DA8D042D6FF6EF3AC8308 /* Collections in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		48B57382297F374393648935 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2A2B01647A6DD268A8012E78 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		200DF0D2B03A28A082772835 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				6AB45018BC002E2A7FA7AF0F /* SuperHearingApp.swift */,
+				47A84B65809988F956E49A75 /* AppDelegate.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		575E908655668B293FC62796 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				0E8582A99EA7885A21949BD2 /* MainTabView.swift */,
+				94A758771C7C2C41DF5D2D07 /* RecordingView.swift */,
+				D4FCF3DC5EEC60E44A306830 /* FileListView.swift */,
+				F45933AECA197577700E799B /* ProcessingView.swift */,
+				4F3CD17182839C0D7B6955CF /* SeparationView.swift */,
+				E2EE5949E698BA3278404FAE /* StemMixerView.swift */,
+				D84705F9C4DEDA531AD105C9 /* SettingsView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		B182D25A581AF8261F8A861E /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				4BB0DA62645C8E6074C991EA /* RecordingViewModel.swift */,
+				7783407BF8928E136B1E0F29 /* FileListViewModel.swift */,
+				5042CB42749E5B1DD3241823 /* ProcessingViewModel.swift */,
+				4B30AFF586E3E3E19B6BDD2C /* SeparationViewModel.swift */,
+				F23BE41E2A8A90397BD2C292 /* StemMixerViewModel.swift */,
+				38FC45AB210124875D5A6480 /* SettingsViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		E74C4842E34193B48C4BB865 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				0F4F795A113D79EFFD812399 /* Stem.swift */,
+				C2B4B9ABAEA50C65B3B4D32A /* AudioFile.swift */,
+				601E606E1B76BB1F159AB498 /* SeparatedAudio.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		8BAA9ED26F64CAEA84168990 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				E88875A11625C6AF94806E52 /* RecordingService.swift */,
+				F47FE1A15ABA7D7353E6A72E /* NoiseReductionService.swift */,
+				52F851BF0C65D8E14E02F8D5 /* EnhancementService.swift */,
+				4BF0F8C64F809BEE41FDF483 /* SeparationService.swift */,
+				98AB8A3D8AF2AB756DD73299 /* PlaybackService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		0115563E0770F58F14D626AD /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				512B128B53C7CE0030783AB1 /* AudioBuffer.swift */,
+				AD0D000B3A4D636DA53A423D /* STFT.swift */,
+				3405512F5E51974D537BF14B /* AGC.swift */,
+				1757A82E9CD16FC736FF57ED /* Extensions.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		35310B5F7B58757F6BE08114 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				ED25B2D4C82C2AFF5F05934C /* Assets.xcassets */,
+				05AF569D196A4524E32A4749 /* Info.plist */,
+				14F8A4D65912422A77CEE7EB /* SuperHearing.entitlements */,
+				A9483E4B9E226B99B595E4CE /* ExportOptions.plist */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		5BE647A08C744B7D520E07C5 /* SuperHearing */ = {
+			isa = PBXGroup;
+			children = (
+				200DF0D2B03A28A082772835 /* App */,
+				575E908655668B293FC62796 /* Views */,
+				B182D25A581AF8261F8A861E /* ViewModels */,
+				E74C4842E34193B48C4BB865 /* Models */,
+				8BAA9ED26F64CAEA84168990 /* Services */,
+				0115563E0770F58F14D626AD /* Utilities */,
+				35310B5F7B58757F6BE08114 /* Resources */,
+			);
+			path = SuperHearing;
+			sourceTree = "<group>";
+		};
+		EDA3651268027BADB993FAF2 /* SuperHearingTests */ = {
+			isa = PBXGroup;
+			children = (
+				DCC272174BD98EB4A0434218 /* SuperHearingTests.swift */,
+			);
+			path = SuperHearingTests;
+			sourceTree = "<group>";
+		};
+		28F4EE6EB7A932B3B48AAF18 /* SuperHearingUITests */ = {
+			isa = PBXGroup;
+			children = (
+				E32AB0B7AC1D5CEDB2A9B6E4 /* SuperHearingUITests.swift */,
+			);
+			path = SuperHearingUITests;
+			sourceTree = "<group>";
+		};
+		1BABC9FE70385367B81EC546 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B77B4E5374FD4DA4EAE62841,
+				347AC704696305F0D1A71F6C,
+				1AF68477667E134014615F6A,
+			);
+			path = Products;
+			sourceTree = "<group>";
+		};
+		016E5C04A36B9E44ADA45781 = {
+			isa = PBXGroup;
+			children = (
+				5BE647A08C744B7D520E07C5 /* SuperHearing */,
+				EDA3651268027BADB993FAF2 /* SuperHearingTests */,
+				28F4EE6EB7A932B3B48AAF18 /* SuperHearingUITests */,
+				1BABC9FE70385367B81EC546 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		6B7806DF8385D707515551EB /* SuperHearing */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 632BA288864925B10E4E6758 /* Build configuration list for PBXNativeTarget "SuperHearing" */;
+			buildPhases = (
+				CDE75C8E05AC1EA7D5C7E7AB /* Sources */,
+				C31F5592C6059C7B8DFE377C /* Frameworks */,
+				67B5BA9CA13E61DB4F1DFCFC /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SuperHearing;
+			packageProductDependencies = (
+				0776ADF1DB4D239472FD27A8 /* AsyncAlgorithms */,
+				27B703D19FBDD8A25A6FB043 /* Collections */,
+			);
+			productName = SuperHearing;
+			productReference = B77B4E5374FD4DA4EAE62841 /* SuperHearing.app */;
+			productType = "com.apple.product-type.application";
+		};
+		A935C98C0E469377853E9E8C /* SuperHearingTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3933564F291B34F37186CEED /* Build configuration list for PBXNativeTarget "SuperHearingTests" */;
+			buildPhases = (
+				5C00B29195E6D4E3B4B6367F /* Sources */,
+				48B57382297F374393648935 /* Frameworks */,
+				6E8162EB7F5F5876C16BD91B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SuperHearingTests;
+			productName = SuperHearingTests;
+			productReference = 347AC704696305F0D1A71F6C /* SuperHearingTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		6D67BDB722567DF0938AA9C9 /* SuperHearingUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2A366C20E490FA15A6F5A933 /* Build configuration list for PBXNativeTarget "SuperHearingUITests" */;
+			buildPhases = (
+				C6FCE07A6F25E5C13EC6E337 /* Sources */,
+				2A2B01647A6DD268A8012E78 /* Frameworks */,
+				840AC27FD5C126E5222A8D0A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SuperHearingUITests;
+			productName = SuperHearingUITests;
+			productReference = 1AF68477667E134014615F6A /* SuperHearingUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		376111E074D00CEA7E4DC946 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1540;
+				TargetAttributes = {
+					6B7806DF8385D707515551EB = {
+						CreatedOnToolsVersion = 15.4;
+					};
+					A935C98C0E469377853E9E8C = {
+						CreatedOnToolsVersion = 15.4;
+						TestTargetID = 6B7806DF8385D707515551EB;
+					};
+					6D67BDB722567DF0938AA9C9 = {
+						CreatedOnToolsVersion = 15.4;
+						TestTargetID = 6B7806DF8385D707515551EB;
+					};
+				};
+			};
+			buildConfigurationList = FD89379CBD003ABEBD95A0DE /* Build configuration list for PBXProject "SuperHearing" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 016E5C04A36B9E44ADA45781;
+			packageReferences = (
+				4D1CD3E987E8E57F1ACC93BB /* XCRemoteSwiftPackageReference "swift-async-algorithms" */,
+				E545E051C376129F4A0B8D9D /* XCRemoteSwiftPackageReference "swift-collections" */,
+			);
+			productRefGroup = 1BABC9FE70385367B81EC546 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				6B7806DF8385D707515551EB /* SuperHearing */,
+				A935C98C0E469377853E9E8C /* SuperHearingTests */,
+				6D67BDB722567DF0938AA9C9 /* SuperHearingUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		67B5BA9CA13E61DB4F1DFCFC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A50F295CF7721455EB821B2A /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6E8162EB7F5F5876C16BD91B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		840AC27FD5C126E5222A8D0A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CDE75C8E05AC1EA7D5C7E7AB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3F759DD944238B1FF7A0D608 /* SuperHearingApp.swift in Sources */,
+				047D837E486BD07C40B8AFAD /* AppDelegate.swift in Sources */,
+				0F1FD585477C545AEB0D1A50 /* MainTabView.swift in Sources */,
+				5C8982E8AAD9D0F21556AFAB /* RecordingView.swift in Sources */,
+				DC415B02046B41EBD1E781DC /* FileListView.swift in Sources */,
+				199CC5B5AC8F0D4E771F4D22 /* ProcessingView.swift in Sources */,
+				FD8ABD860D41C4337BE6DEFF /* SeparationView.swift in Sources */,
+				E936385C54B5B321FB800C3C /* StemMixerView.swift in Sources */,
+				82BFD3AD64500B6711E6B997 /* SettingsView.swift in Sources */,
+				673717E6F17E70F9E8DFDC80 /* RecordingViewModel.swift in Sources */,
+				FE9FC005845AE7CB08EE6080 /* FileListViewModel.swift in Sources */,
+				E916E8CDE335283C92ED956C /* ProcessingViewModel.swift in Sources */,
+				977F019633C07A007A434FA2 /* SeparationViewModel.swift in Sources */,
+				0515DB1308B0AB34F1BE4A51 /* StemMixerViewModel.swift in Sources */,
+				3233F74D40E18E22CD833860 /* SettingsViewModel.swift in Sources */,
+				9A54B557AE2E9C3CCC71E018 /* Stem.swift in Sources */,
+				15F48E1C9916FB9CD8157F40 /* AudioFile.swift in Sources */,
+				FB7B27D6CA50EAD315695EC6 /* SeparatedAudio.swift in Sources */,
+				F9202511475645D0F4865975 /* RecordingService.swift in Sources */,
+				859B0775EF70BB717A8F2197 /* NoiseReductionService.swift in Sources */,
+				20B72EE24EBBA41E5B0A3D9A /* EnhancementService.swift in Sources */,
+				E2C8568274761F63930DD0AE /* SeparationService.swift in Sources */,
+				7441E3EB879EF0A6C0F4CCD6 /* PlaybackService.swift in Sources */,
+				2BCEC6FF2801AEA696E273A9 /* AudioBuffer.swift in Sources */,
+				1F3B2C968B8181097B2B8100 /* STFT.swift in Sources */,
+				9BF767C63E593BE38E706BAA /* AGC.swift in Sources */,
+				BA1D783D1078AD018C539BE0 /* Extensions.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5C00B29195E6D4E3B4B6367F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C0D8A9AF0B142DF3FFDE4CB4 /* SuperHearingTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C6FCE07A6F25E5C13EC6E337 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8AA4ADCEBBADBD0EE8212926 /* SuperHearingUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		4D1CD3E987E8E57F1ACC93BB /* XCRemoteSwiftPackageReference "swift-async-algorithms" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-async-algorithms";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+		E545E051C376129F4A0B8D9D /* XCRemoteSwiftPackageReference "swift-collections" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-collections";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		0776ADF1DB4D239472FD27A8 /* AsyncAlgorithms */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4D1CD3E987E8E57F1ACC93BB /* XCRemoteSwiftPackageReference "swift-async-algorithms" */;
+			productName = AsyncAlgorithms;
+		};
+		27B703D19FBDD8A25A6FB043 /* Collections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E545E051C376129F4A0B8D9D /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = Collections;
+		};
+/* End XCSwiftPackageProductDependency section */
+
+/* Begin XCBuildConfiguration section */
+		CEBF7BDACDA191C016A3D894 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+		2D9902B0307FD62959CEFDB5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_OPTIMIZATION_LEVEL = s;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		4AE4F3A483B2F11438AA4454 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = SuperHearing/Resources/SuperHearing.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = SuperHearing/Resources/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = SuperHearing;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.superhearing.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		780E286A70DD3C2D17AF79E9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = SuperHearing/Resources/SuperHearing.entitlements;
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = SuperHearing/Resources/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = SuperHearing;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.superhearing.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		13A4E4312CF120A54EEA71BA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.superhearing.appTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SuperHearing.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SuperHearing";
+			};
+			name = Debug;
+		};
+		2FA152BE5A902D202790993F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.superhearing.appTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SuperHearing.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SuperHearing";
+			};
+			name = Release;
+		};
+		595057ACC1B6344439BEA664 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_BUNDLE_IDENTIFIER = com.superhearing.appUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = SuperHearing;
+			};
+			name = Debug;
+		};
+		975B46236D9A4BB53FBC62E5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_BUNDLE_IDENTIFIER = com.superhearing.appUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = SuperHearing;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		FD89379CBD003ABEBD95A0DE /* Build configuration list for PBXProject "SuperHearing" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CEBF7BDACDA191C016A3D894 /* Debug */,
+				2D9902B0307FD62959CEFDB5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		632BA288864925B10E4E6758 /* Build configuration list for PBXNativeTarget "SuperHearing" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4AE4F3A483B2F11438AA4454 /* Debug */,
+				780E286A70DD3C2D17AF79E9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3933564F291B34F37186CEED /* Build configuration list for PBXNativeTarget "SuperHearingTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				13A4E4312CF120A54EEA71BA /* Debug */,
+				2FA152BE5A902D202790993F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2A366C20E490FA15A6F5A933 /* Build configuration list for PBXNativeTarget "SuperHearingUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				595057ACC1B6344439BEA664 /* Debug */,
+				975B46236D9A4BB53FBC62E5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+	};
+	rootObject = 376111E074D00CEA7E4DC946 /* Project object */;
+}
