@@ -174,8 +174,7 @@ public final class RecordingService: NSObject, RecordingServiceProtocol, @unchec
             AVNumberOfChannelsKey: 1,
             AVLinearPCMBitDepthKey: 32,
             AVLinearPCMIsFloatKey: true,
-            AVLinearPCMIsBigEndianKey: false,
-            AVLinearPCMIsNonInterleavedKey: false
+            AVLinearPCMIsBigEndianKey: false
         ]
 
         let audioFile = try AVAudioFile(forWriting: fileURL, settings: settings, commonFormat: .pcmFormatFloat32, interleaved: false)

@@ -365,8 +365,7 @@ public final class StemMixerEngine: @unchecked Sendable {
             AVNumberOfChannelsKey: format.channelCount,
             AVLinearPCMBitDepthKey: 32,
             AVLinearPCMIsFloatKey: true,
-            AVLinearPCMIsBigEndianKey: false,
-            AVLinearPCMIsNonInterleavedKey: false
+            AVLinearPCMIsBigEndianKey: false
         ]
 
         let outFile = try AVAudioFile(forWriting: destinationURL, settings: settings, commonFormat: .pcmFormatFloat32, interleaved: false)

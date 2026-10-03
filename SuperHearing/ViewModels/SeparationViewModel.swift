@@ -57,7 +57,7 @@ public final class SeparationViewModel: ObservableObject {
                     outputDirectory: stemFolder,
                     quality: self.quality
                 ) { [weak self] p, chunk, total in
-                    Task { @MainActor in
+                    Task { @MainActor [weak self] in
                         self?.progress = p
                         self?.currentChunk = chunk
                         self?.totalChunks = total

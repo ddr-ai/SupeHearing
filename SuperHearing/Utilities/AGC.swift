@@ -155,7 +155,7 @@ public final class AGCProcessor: Sendable {
         }
 
         // 5. Dynamic Range Compression (Threshold: -24dBFS, Ratio 3:1)
-        let compThreshold = pow(10.0, -24.0 / 20.0) // ~0.063
+        let compThreshold: Float = Float(pow(10.0, -24.0 / 20.0)) // ~0.063
         let ratio: Float = 3.0
 
         for i in 0..<agcOutput.count {
@@ -176,9 +176,9 @@ public final class AGCProcessor: Sendable {
             if absVal > ceiling {
                 // Soft saturation curve: ceiling + (1 - ceiling) * tanh((abs - ceiling) / (1 - ceiling))
                 let delta = absVal - ceiling
-                let headroom = 1.0 - ceiling
-                let compressedPeak = ceiling + headroom * tanh(delta / headroom)
-                agcOutput[i] = (val / absVal) * min(0.99, compressedPeak)
+                let headroom: Float = 1.0 - ceiling
+                let compressedPeak: Float = ceiling + headroom * Float(tanh(Double(delta / headroom)))
+                agcOutput[i] = (val / absVal) * min(Float(0.99), compressedPeak)
             }
         }
 

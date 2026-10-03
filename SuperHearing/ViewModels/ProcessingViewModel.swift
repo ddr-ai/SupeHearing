@@ -72,7 +72,7 @@ public final class ProcessingViewModel: ObservableObject {
                     strength: self.nrStrength,
                     useWiener: self.useWienerFilter
                 ) { [weak self] p in
-                    Task { @MainActor in
+                    Task { @MainActor [weak self] in
                         self?.progress = p * 0.5
                     }
                 }
@@ -84,7 +84,7 @@ public final class ProcessingViewModel: ObservableObject {
                     outputURL: outputURL,
                     intensity: self.enhancementIntensity
                 ) { [weak self] p in
-                    Task { @MainActor in
+                    Task { @MainActor [weak self] in
                         self?.progress = 0.5 + p * 0.45
                     }
                 }
