@@ -12,9 +12,12 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: write
+
 jobs:
   build:
-    name: Build & Archive iOS App
+    name: Build & Package IPA
     runs-on: macos-14
 
     steps:
@@ -46,12 +49,16 @@ jobs:
         run: |
           if [ -n "${{ secrets.APPLE_CERTIFICATE }}" ] && [ -n "${{ secrets.MOBILEPROVISION }}" ]; then
             echo "HAS_SECRETS=true" >> $GITHUB_ENV
+            echo "::notice::Apple Developer credentials detected. Building signed distribution IPA."
           else
             echo "HAS_SECRETS=false" >> $GITHUB_ENV
-            echo "::notice::Signing secrets not provided. Building unsigned simulator/generic build."
+            echo "::notice::No Apple Certificate / Provisioning Profile found. Building unsigned/ad-hoc IPA (no Apple account or Team ID needed)."
           fi
 
-      - name: Install Apple Certificate and Provisioning Profile (Ad Hoc)
+      # -----------------------------------------------------------------
+      # Optional: Official Apple Developer Signing (if secrets are set)
+      # -----------------------------------------------------------------
+      - name: Install Apple Certificate and Provisioning Profile
         if: env.HAS_SECRETS == 'true'
         env:
           BUILD_CERTIFICATE_BASE64: ${{ secrets.APPLE_CERTIFICATE }}
@@ -77,7 +84,7 @@ jobs:
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles/
 
-      - name: Build & Archive (Signed Ad Hoc)
+      - name: Build & Archive (Signed)
         if: env.HAS_SECRETS == 'true'
         run: |
           mkdir -p build/ipa
@@ -93,26 +100,70 @@ jobs:
             -exportPath build/ipa \
             -exportOptionsPlist SuperHearing/Resources/ExportOptions.plist
 
-      - name: Build Unsigned Generic Archive / Test Build
-        if: env.HAS_SECRETS == 'false'
+      # -----------------------------------------------------------------
+      # Default: Build & Package IPA without Apple certs, profile or Team ID
+      # -----------------------------------------------------------------
+      - name: Build Archive (Unsigned / No Developer Account)
+        if: env.HAS_SECRETS != 'true'
         run: |
-          mkdir -p build/ipa
+          mkdir -p build
           xcodebuild -project SuperHearing.xcodeproj \
             -scheme SuperHearing \
+            -configuration Release \
             -destination "generic/platform=iOS" \
+            -archivePath build/SuperHearing.xcarchive \
             CODE_SIGNING_ALLOWED=NO \
-            build
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            archive
 
+      - name: Package IPA (Ad-Hoc / Sideloading)
+        if: env.HAS_SECRETS != 'true'
+        run: |
+          mkdir -p build/ipa/Payload
+
+          # Locate built application bundle
+          if [ -d "build/SuperHearing.xcarchive/Products/Applications/SuperHearing.app" ]; then
+            APP_PATH="build/SuperHearing.xcarchive/Products/Applications/SuperHearing.app"
+          else
+            APP_PATH=$(find build -name "SuperHearing.app" -type d | head -n 1)
+          fi
+
+          if [ -z "$APP_PATH" ] || [ ! -d "$APP_PATH" ]; then
+            echo "::error::Could not find SuperHearing.app in build output!"
+            exit 1
+          fi
+
+          echo "Found app bundle at: $APP_PATH"
+          cp -R "$APP_PATH" build/ipa/Payload/
+
+          # Ad-hoc sign with '-' and embed entitlements so sideloaders (AltStore, Sideloadly, TrollStore) accept it
+          if [ -f "SuperHearing/Resources/SuperHearing.entitlements" ]; then
+            codesign --force --deep --sign - --entitlements SuperHearing/Resources/SuperHearing.entitlements "build/ipa/Payload/SuperHearing.app" 2>/dev/null || \
+            codesign --force --deep --sign - "build/ipa/Payload/SuperHearing.app" || true
+          else
+            codesign --force --deep --sign - "build/ipa/Payload/SuperHearing.app" || true
+          fi
+
+          cd build/ipa
+          zip -r -q SuperHearing.ipa Payload
+          rm -rf Payload
+          echo "Successfully created $(pwd)/SuperHearing.ipa"
+          ls -lh SuperHearing.ipa
+
+      # -----------------------------------------------------------------
+      # Upload Artifact & Create GitHub Release (Always executed)
+      # -----------------------------------------------------------------
       - name: Upload IPA Artifact
-        if: env.HAS_SECRETS == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: SuperHearing-AdHoc-IPA
+          name: SuperHearing-ipa
           path: build/ipa/*.ipa
           retention-days: 90
+          if-no-files-found: error
 
       - name: Create GitHub Release
-        if: startsWith(github.ref, 'refs/tags/v') && env.HAS_SECRETS == 'true'
+        if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
           files: build/ipa/*.ipa

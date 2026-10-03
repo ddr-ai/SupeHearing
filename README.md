@@ -119,21 +119,29 @@ To run full neural source separation on device:
 
 ---
 
-## GitHub Actions CI/CD (Ad Hoc IPA Generation)
+## GitHub Actions CI/CD (Zero-Setup IPA Generation)
 
-The repository includes `.github/workflows/build-ipa.yml`, which triggers on pushes to `main` and version tags (`v*`).
+The repository includes `.github/workflows/build-ipa.yml`, which triggers on pushes to `main`, pull requests, and version tags (`v*`).
 
-### Required GitHub Repository Secrets
-Under **Settings** → **Secrets and variables** → **Actions**, add:
+### Zero-Setup IPA Build (Default)
+**No Apple Developer Account, certificates, provisioning profiles, or Team IDs are required.**
+- The GitHub Actions workflow automatically builds an unsigned/ad-hoc archive (`CODE_SIGNING_ALLOWED=NO`).
+- Embeds entitlements and packages `Payload/SuperHearing.app` into `SuperHearing.ipa`.
+- Automatically uploads `SuperHearing.ipa` as the **`SuperHearing-ipa`** artifact on every build run.
+- On pushing version tags (e.g. `git tag v1.0.0 && git push origin v1.0.0`), attaches `SuperHearing.ipa` directly as an uncompressed downloadable asset to the GitHub Release.
 
-| Secret Name | Description |
-|---|---|
-| `APPLE_CERTIFICATE` | Base64-encoded `.p12` distribution certificate (`base64 -i cert.p12`) |
-| `APPLE_CERT_PASSWORD` | Password used to encrypt the `.p12` file |
-| `MOBILEPROVISION` | Base64-encoded Ad Hoc provisioning profile (`base64 -i SuperHearing.mobileprovision`) |
-| `TEAM_ID` | 10-character Apple Developer Team ID |
+### Sideloading the Downloaded IPA
+Once downloaded from GitHub Actions Artifacts or GitHub Releases:
+- **AltStore / Sideloadly**: Sideload directly to physical iOS devices using your free personal Apple ID.
+- **TrollStore**: Direct installation without revokes or 7-day expiration on supported iOS versions.
+- **Scarlet / Esign / LiveContainer**: Compatible with standard on-device signing utilities.
 
-On tagging a release (e.g. `git tag v1.0.0 && git push origin v1.0.0`), the workflow builds the signed archive, exports `SuperHearing.ipa`, attaches it as a build artifact, and creates a GitHub Release with the installable IPA asset.
+### Optional: Official Apple Developer Signing
+If you wish to build an official signed Ad Hoc / Enterprise distribution build, optionally configure these secrets under **Settings** → **Secrets and variables** → **Actions**:
+- `APPLE_CERTIFICATE`: Base64-encoded `.p12` certificate (`base64 -i cert.p12`)
+- `APPLE_CERT_PASSWORD`: Password for the `.p12` file
+- `MOBILEPROVISION`: Base64-encoded provisioning profile (`base64 -i SuperHearing.mobileprovision`)
+- `KEYCHAIN_PASSWORD`: (Optional) Custom temporary keychain password
 
 ---
 
