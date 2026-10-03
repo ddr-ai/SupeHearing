@@ -78,6 +78,7 @@ SuperHearing/
 ├── docs/
 │   └── model_preparation.md            # HTDemucs export & INT8 quantization guide
 ├── scripts/
+│   ├── install_dependencies.sh          # Automated installer for build tools, Xcode & SPM dependencies
 │   ├── export_coreml_model.py           # Python script to convert Demucs to CoreML INT8
 │   └── generate_pbxproj.py              # Generator for Xcode project.pbxproj
 ├── Package.swift                        # SwiftPM configuration

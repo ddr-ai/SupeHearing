@@ -24,11 +24,6 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Select Xcode Version
-        run: |
-          sudo xcode-select -s /Applications/Xcode_15.4.app || sudo xcode-select -s /Applications/Xcode.app
-          xcodebuild -version
-
       - name: Cache Swift Package Dependencies
         uses: actions/cache@v4
         with:
@@ -40,9 +35,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-spm-
 
-      - name: Resolve SPM Dependencies
+      - name: Install Build Dependencies & Tools
         run: |
-          xcodebuild -project SuperHearing.xcodeproj -scheme SuperHearing -resolvePackageDependencies
+          chmod +x scripts/install_dependencies.sh
+          ./scripts/install_dependencies.sh
 
       - name: Check Code Signing Secrets
         id: check_secrets
