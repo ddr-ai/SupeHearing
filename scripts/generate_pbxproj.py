@@ -36,17 +36,6 @@ def main():
     uitests_frameworks_id = gen_id("BuildPhase_UITests_Frameworks")
     uitests_resources_id = gen_id("BuildPhase_UITests_Resources")
     uitests_product_id = gen_id("Product_SuperHearingUITests")
-
-    # Packages
-    pkg_async_algo_id = gen_id("Pkg_AsyncAlgorithms")
-    pkg_collections_id = gen_id("Pkg_Collections")
-
-    prod_dep_async_id = gen_id("ProdDep_AsyncAlgorithms")
-    prod_dep_deque_id = gen_id("ProdDep_Collections")
-
-    build_pkg_async_id = gen_id("BuildPkg_AsyncAlgorithms")
-    build_pkg_deque_id = gen_id("BuildPkg_Collections")
-
     # Source files list: (subfolder, filename, target)
     source_files = [
         ("SuperHearing/App", "SuperHearingApp.swift", "app"),
@@ -119,9 +108,6 @@ def main():
     a_ref, a_bref, _ = res_map[assets_path]
     out.append(f"\t\t{a_bref} /* Assets.xcassets in Resources */ = {{isa = PBXBuildFile; fileRef = {a_ref} /* Assets.xcassets */; }};")
 
-    # Package build files
-    out.append(f"\t\t{build_pkg_async_id} /* AsyncAlgorithms in Frameworks */ = {{isa = PBXBuildFile; productRef = {prod_dep_async_id} /* AsyncAlgorithms */; }};")
-    out.append(f"\t\t{build_pkg_deque_id} /* Collections in Frameworks */ = {{isa = PBXBuildFile; productRef = {prod_dep_deque_id} /* Collections */; }};")
     out.append("/* End PBXBuildFile section */")
     out.append("")
 
@@ -148,8 +134,6 @@ def main():
     out.append("\t\t\tisa = PBXFrameworksBuildPhase;")
     out.append("\t\t\tbuildActionMask = 2147483647;")
     out.append("\t\t\tfiles = (")
-    out.append(f"\t\t\t\t{build_pkg_async_id} /* AsyncAlgorithms in Frameworks */,")
-    out.append(f"\t\t\t\t{build_pkg_deque_id} /* Collections in Frameworks */,")
     out.append("\t\t\t);")
     out.append("\t\t\trunOnlyForDeploymentPostprocessing = 0;")
     out.append("\t\t};")
@@ -250,8 +234,6 @@ def main():
     out.append("\t\t\t);")
     out.append("\t\t\tname = SuperHearing;")
     out.append("\t\t\tpackageProductDependencies = (")
-    out.append(f"\t\t\t\t{prod_dep_async_id} /* AsyncAlgorithms */,")
-    out.append(f"\t\t\t\t{prod_dep_deque_id} /* Collections */,")
     out.append("\t\t\t);")
     out.append(f"\t\t\tproductName = SuperHearing;")
     out.append(f"\t\t\tproductReference = {app_product_id} /* SuperHearing.app */;")
@@ -329,8 +311,6 @@ def main():
     out.append("\t\t\t);")
     out.append(f"\t\t\tmainGroup = {main_group_id};")
     out.append("\t\t\tpackageReferences = (")
-    out.append(f"\t\t\t\t{pkg_async_algo_id} /* XCRemoteSwiftPackageReference \"swift-async-algorithms\" */,")
-    out.append(f"\t\t\t\t{pkg_collections_id} /* XCRemoteSwiftPackageReference \"swift-collections\" */,")
     out.append("\t\t\t);")
     out.append(f"\t\t\tproductRefGroup = {products_group_id} /* Products */;")
     out.append("\t\t\tprojectDirPath = \"\";")
@@ -414,44 +394,6 @@ def main():
     out.append("\t\t\trunOnlyForDeploymentPostprocessing = 0;")
     out.append("\t\t};")
     out.append("/* End PBXSourcesBuildPhase section */")
-    out.append("")
-
-    # --- XCRemoteSwiftPackageReference Section ---
-    out.append("/* Begin XCRemoteSwiftPackageReference section */")
-    out.append(f"\t\t{pkg_async_algo_id} /* XCRemoteSwiftPackageReference \"swift-async-algorithms\" */ = {{")
-    out.append("\t\t\tisa = XCRemoteSwiftPackageReference;")
-    out.append("\t\t\trepositoryURL = \"https://github.com/apple/swift-async-algorithms\";")
-    out.append("\t\t\trequirement = {")
-    out.append("\t\t\t\tkind = upToNextMajorVersion;")
-    out.append("\t\t\t\tminimumVersion = 1.0.0;")
-    out.append("\t\t\t};")
-    out.append("\t\t};")
-
-    out.append(f"\t\t{pkg_collections_id} /* XCRemoteSwiftPackageReference \"swift-collections\" */ = {{")
-    out.append("\t\t\tisa = XCRemoteSwiftPackageReference;")
-    out.append("\t\t\trepositoryURL = \"https://github.com/apple/swift-collections\";")
-    out.append("\t\t\trequirement = {")
-    out.append("\t\t\t\tkind = upToNextMajorVersion;")
-    out.append("\t\t\t\tminimumVersion = 1.1.0;")
-    out.append("\t\t\t};")
-    out.append("\t\t};")
-    out.append("/* End XCRemoteSwiftPackageReference section */")
-    out.append("")
-
-    # --- XCSwiftPackageProductDependency Section ---
-    out.append("/* Begin XCSwiftPackageProductDependency section */")
-    out.append(f"\t\t{prod_dep_async_id} /* AsyncAlgorithms */ = {{")
-    out.append("\t\t\tisa = XCSwiftPackageProductDependency;")
-    out.append(f"\t\t\tpackage = {pkg_async_algo_id} /* XCRemoteSwiftPackageReference \"swift-async-algorithms\" */;")
-    out.append("\t\t\tproductName = AsyncAlgorithms;")
-    out.append("\t\t};")
-
-    out.append(f"\t\t{prod_dep_deque_id} /* Collections */ = {{")
-    out.append("\t\t\tisa = XCSwiftPackageProductDependency;")
-    out.append(f"\t\t\tpackage = {pkg_collections_id} /* XCRemoteSwiftPackageReference \"swift-collections\" */;")
-    out.append("\t\t\tproductName = Collections;")
-    out.append("\t\t};")
-    out.append("/* End XCSwiftPackageProductDependency section */")
     out.append("")
 
     # --- XCBuildConfiguration Section ---

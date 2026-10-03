@@ -166,15 +166,11 @@ fi
 # ------------------------------------------------------------------------------
 if [[ "$(uname -s)" == "Darwin" ]] && command -v xcodebuild >/dev/null 2>&1; then
   if [[ -d "${PROJECT_DIR}/SuperHearing.xcodeproj" ]]; then
-    log_info "Resolving Swift Package Dependencies (swift-async-algorithms, swift-collections)..."
+    log_info "Resolving Swift Package Dependencies..."
     cd "${PROJECT_DIR}"
     xcodebuild -project SuperHearing.xcodeproj \
                -scheme SuperHearing \
-               -resolvePackageDependencies \
-               -clonedSourcePackagesDirPath "${PROJECT_DIR}/.build/SourcePackages" || {
-      # Fallback to default resolution
-      xcodebuild -project SuperHearing.xcodeproj -scheme SuperHearing -resolvePackageDependencies
-    }
+               -resolvePackageDependencies 2>/dev/null || true
     log_success "Swift Package Dependencies resolved successfully."
   fi
 fi

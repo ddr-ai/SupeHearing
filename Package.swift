@@ -13,17 +13,11 @@ let package = Package(
             targets: ["SuperHearing"]
         ),
     ],
-    dependencies: [
-        .package(url: "https://github.com/apple/swift-async-algorithms", from: "1.0.0"),
-        .package(url: "https://github.com/apple/swift-collections", from: "1.1.0"),
-    ],
+    dependencies: [],
     targets: [
         .target(
             name: "SuperHearing",
-            dependencies: [
-                .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
-                .product(name: "Collections", package: "swift-collections"),
-            ],
+            dependencies: [],
             path: "SuperHearing",
             exclude: [
                 "Resources/Info.plist",

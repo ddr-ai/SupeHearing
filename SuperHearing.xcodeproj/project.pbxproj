@@ -37,8 +37,6 @@
 		C0D8A9AF0B142DF3FFDE4CB4 /* SuperHearingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCC272174BD98EB4A0434218 /* SuperHearingTests.swift */; };
 		8AA4ADCEBBADBD0EE8212926 /* SuperHearingUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32AB0B7AC1D5CEDB2A9B6E4 /* SuperHearingUITests.swift */; };
 		A50F295CF7721455EB821B2A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = ED25B2D4C82C2AFF5F05934C /* Assets.xcassets */; };
-		3CE8F24423E388B211F9C493 /* AsyncAlgorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 0776ADF1DB4D239472FD27A8 /* AsyncAlgorithms */; };
-		383DA8D042D6FF6EF3AC8308 /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = 27B703D19FBDD8A25A6FB043 /* Collections */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -85,8 +83,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3CE8F24423E388B211F9C493 /* AsyncAlgorithms in Frameworks */,
-				383DA8D042D6FF6EF3AC8308 /* Collections in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -254,8 +250,6 @@
 			);
 			name = SuperHearing;
 			packageProductDependencies = (
-				0776ADF1DB4D239472FD27A8 /* AsyncAlgorithms */,
-				27B703D19FBDD8A25A6FB043 /* Collections */,
 			);
 			productName = SuperHearing;
 			productReference = B77B4E5374FD4DA4EAE62841 /* SuperHearing.app */;
@@ -327,8 +321,6 @@
 			);
 			mainGroup = 016E5C04A36B9E44ADA45781;
 			packageReferences = (
-				4D1CD3E987E8E57F1ACC93BB /* XCRemoteSwiftPackageReference "swift-async-algorithms" */,
-				E545E051C376129F4A0B8D9D /* XCRemoteSwiftPackageReference "swift-collections" */,
 			);
 			productRefGroup = 1BABC9FE70385367B81EC546 /* Products */;
 			projectDirPath = "";
@@ -418,38 +410,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		4D1CD3E987E8E57F1ACC93BB /* XCRemoteSwiftPackageReference "swift-async-algorithms" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/apple/swift-async-algorithms";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
-			};
-		};
-		E545E051C376129F4A0B8D9D /* XCRemoteSwiftPackageReference "swift-collections" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/apple/swift-collections";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.1.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		0776ADF1DB4D239472FD27A8 /* AsyncAlgorithms */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4D1CD3E987E8E57F1ACC93BB /* XCRemoteSwiftPackageReference "swift-async-algorithms" */;
-			productName = AsyncAlgorithms;
-		};
-		27B703D19FBDD8A25A6FB043 /* Collections */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E545E051C376129F4A0B8D9D /* XCRemoteSwiftPackageReference "swift-collections" */;
-			productName = Collections;
-		};
-/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCBuildConfiguration section */
 		CEBF7BDACDA191C016A3D894 /* Debug */ = {
