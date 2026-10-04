@@ -54,10 +54,14 @@ public struct RecordingView: View {
             .sheet(isPresented: $showingSettings) {
                 SettingsView()
             }
-            .sheet(item: $newlyRecordedFile) { file in
+            .sheet(item: $newlyRecordedFile, onDismiss: {
+                if case .ready = viewModel.state {
+                    viewModel.state = .idle
+                }
+            }) { file in
                 ProcessingView(audioFile: file)
             }
-            .onChange(of: viewModel.state) { newState in
+            .onChange(of: viewModel.state) { _, newState in
                 if case .ready(let file) = newState {
                     newlyRecordedFile = file
                 }

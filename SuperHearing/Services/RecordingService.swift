@@ -2,6 +2,22 @@ import Foundation
 import AVFoundation
 import Accelerate
 
+public struct RecordingResult: Sendable {
+    public let url: URL
+    public let fileName: String
+    public let duration: TimeInterval
+    public let fileSize: Int64
+    public let waveform: [Float]
+
+    public init(url: URL, fileName: String, duration: TimeInterval, fileSize: Int64, waveform: [Float]) {
+        self.url = url
+        self.fileName = fileName
+        self.duration = duration
+        self.fileSize = fileSize
+        self.waveform = waveform
+    }
+}
+
 public protocol RecordingServiceProtocol: AnyObject, Sendable {
     var isRecording: Bool { get }
     var isPaused: Bool { get }
@@ -13,7 +29,7 @@ public protocol RecordingServiceProtocol: AnyObject, Sendable {
     func startRecording(to fileName: String) async throws
     func pauseRecording()
     func resumeRecording()
-    func stopRecording() async throws -> (duration: TimeInterval, fileSize: Int64, waveform: [Float])
+    func stopRecording() async throws -> RecordingResult
 }
 
 /// Manages audio input routing, Bluetooth device detection, and real-time audio recording via AVAudioEngine.
@@ -23,6 +39,8 @@ public final class RecordingService: NSObject, RecordingServiceProtocol, @unchec
     private let audioEngine = AVAudioEngine()
     private var audioFile: AVAudioFile?
     private var targetURL: URL?
+    private var targetFileName: String?
+    private var isTapInstalled: Bool = false
     private let circularBuffer = CircularAudioBuffer(capacity: 48000 * 2)
 
     private var recordedSamples: [Float] = []
@@ -49,6 +67,9 @@ public final class RecordingService: NSObject, RecordingServiceProtocol, @unchec
     deinit {
         NotificationCenter.default.removeObserver(self)
         stopTimer()
+        if isTapInstalled {
+            audioEngine.inputNode.removeTap(onBus: 0)
+        }
         if audioEngine.isRunning {
             audioEngine.stop()
         }
@@ -153,9 +174,21 @@ public final class RecordingService: NSObject, RecordingServiceProtocol, @unchec
         let fileURL = AudioFile.recordingsDirectory.appendingPathComponent(fileName)
         fileURL.removeIfExisting()
         self.targetURL = fileURL
+        self.targetFileName = fileName
 
         let inputNode = audioEngine.inputNode
         let hardwareFormat = inputNode.inputFormat(forBus: 0)
+
+        // Guard against invalid hardware format
+        let sampleRate = hardwareFormat.sampleRate > 0 ? hardwareFormat.sampleRate : 48000.0
+        let channelCount = hardwareFormat.channelCount > 0 ? hardwareFormat.channelCount : 1
+
+        let safeHardwareFormat = AVAudioFormat(
+            commonFormat: .pcmFormatFloat32,
+            sampleRate: sampleRate,
+            channels: channelCount,
+            interleaved: false
+        ) ?? hardwareFormat
 
         // Standard 48kHz mono float PCM recording format
         let recordFormat = AVAudioFormat(
@@ -166,7 +199,7 @@ public final class RecordingService: NSObject, RecordingServiceProtocol, @unchec
         )!
 
         // Create converter if hardware format differs
-        let formatConverter = AVAudioConverter(from: hardwareFormat, to: recordFormat)
+        let formatConverter = AVAudioConverter(from: safeHardwareFormat, to: recordFormat)
 
         let settings: [String: Any] = [
             AVFormatIDKey: kAudioFormatLinearPCM,
@@ -177,22 +210,32 @@ public final class RecordingService: NSObject, RecordingServiceProtocol, @unchec
             AVLinearPCMIsBigEndianKey: false
         ]
 
-        let audioFile = try AVAudioFile(forWriting: fileURL, settings: settings, commonFormat: .pcmFormatFloat32, interleaved: false)
-        self.audioFile = audioFile
+        let audioFile = try AVAudioFile(
+            forWriting: fileURL,
+            settings: settings,
+            commonFormat: .pcmFormatFloat32,
+            interleaved: false
+        )
 
         lock.lock()
-        recordedSamples.removeAll(keepingCapacity: true)
+        self.audioFile = audioFile
+        self.recordedSamples.removeAll(keepingCapacity: true)
         lock.unlock()
+
         circularBuffer.clear()
 
-        inputNode.removeTap(onBus: 0)
-        let bufferSize: AVAudioFrameCount = 2048
+        if isTapInstalled {
+            inputNode.removeTap(onBus: 0)
+            isTapInstalled = false
+        }
 
-        inputNode.installTap(onBus: 0, bufferSize: bufferSize, format: hardwareFormat) { [weak self] buffer, time in
-            guard let self = self, self.isRecording, !self.isPaused else { return }
+        let bufferSize: AVAudioFrameCount = 2048
+        inputNode.installTap(onBus: 0, bufferSize: bufferSize, format: safeHardwareFormat) { [weak self] buffer, time in
+            guard let self = self, self.isRecording, !self.isPaused, buffer.frameLength > 0 else { return }
 
             if let converter = formatConverter {
-                let capacity = AVAudioFrameCount(Double(buffer.frameLength) * 48000.0 / hardwareFormat.sampleRate) + 512
+                let frameRatio = 48000.0 / sampleRate
+                let capacity = AVAudioFrameCount(Double(buffer.frameLength) * frameRatio) + 512
                 guard let convertedBuffer = AVAudioPCMBuffer(pcmFormat: recordFormat, frameCapacity: capacity) else { return }
 
                 var error: NSError?
@@ -215,8 +258,11 @@ public final class RecordingService: NSObject, RecordingServiceProtocol, @unchec
                 self.processRecordedBuffer(buffer)
             }
         }
+        isTapInstalled = true
 
-        try audioEngine.start()
+        if !audioEngine.isRunning {
+            try audioEngine.start()
+        }
 
         isRecording = true
         isPaused = false
@@ -227,22 +273,22 @@ public final class RecordingService: NSObject, RecordingServiceProtocol, @unchec
     }
 
     private func processRecordedBuffer(_ buffer: AVAudioPCMBuffer) {
+        guard isRecording else { return }
         guard let channelData = buffer.floatChannelData?[0] else { return }
         let frameCount = Int(buffer.frameLength)
+        guard frameCount > 0 else { return }
 
-        // Write to disk
+        // Write to disk and store samples under lock
+        lock.lock()
         if let audioFile = self.audioFile {
             try? audioFile.write(from: buffer)
         }
-
-        // Write to circular buffer for real-time monitoring
-        circularBuffer.append(samples: channelData, count: frameCount)
-
-        // Collect samples for waveform thumbnail
-        lock.lock()
         let pointer = UnsafeBufferPointer(start: channelData, count: frameCount)
         recordedSamples.append(contentsOf: pointer)
         lock.unlock()
+
+        // Write to circular buffer for real-time monitoring
+        circularBuffer.append(samples: channelData, count: frameCount)
 
         // Update amplitude & dBFS
         let rms = circularBuffer.currentRMS(windowSize: 1024)
@@ -267,51 +313,93 @@ public final class RecordingService: NSObject, RecordingServiceProtocol, @unchec
         recordingStartTime = Date()
     }
 
-    public func stopRecording() async throws -> (duration: TimeInterval, fileSize: Int64, waveform: [Float]) {
+    public func stopRecording() async throws -> RecordingResult {
         guard isRecording else {
             throw NSError(domain: "SuperHearing", code: 1, userInfo: [NSLocalizedDescriptionKey: "No active recording to stop"])
         }
 
+        guard let url = targetURL else {
+            throw NSError(domain: "SuperHearing", code: 2, userInfo: [NSLocalizedDescriptionKey: "No target recording URL found"])
+        }
+
+        let recordedFileName = targetFileName ?? url.lastPathComponent
+
         if let start = recordingStartTime {
             accumulatedDuration += Date().timeIntervalSince(start)
+            recordingStartTime = nil
         }
 
         let finalDuration = accumulatedDuration
 
-        stopTimer()
-        audioEngine.inputNode.removeTap(onBus: 0)
-        audioEngine.stop()
-
-        self.audioFile = nil
+        // 1. Immediately flag recording as inactive so tap callbacks stop writing
         isRecording = false
         isPaused = false
-        currentAmplitude = 0.0
-        currentDBFS = -100.0
+        stopTimer()
 
-        let url = targetURL
-        let fileSize = url?.fileSize ?? 0
+        // 2. Safely remove tap on bus 0 if installed
+        if isTapInstalled {
+            audioEngine.inputNode.removeTap(onBus: 0)
+            isTapInstalled = false
+        }
 
+        // 3. Stop audio engine if running
+        if audioEngine.isRunning {
+            audioEngine.stop()
+        }
+
+        // 4. Safely close audio file and snapshot recorded samples under lock
         lock.lock()
+        self.audioFile = nil
         let samples = self.recordedSamples
         self.recordedSamples = []
         lock.unlock()
 
+        currentAmplitude = 0.0
+        currentDBFS = -100.0
+
+        let fileSize = url.fileSize
+
         // Downsample to 60 waveform bars for library display
         let waveform = CircularAudioBuffer.downsample(samples: samples, targetPoints: 60)
 
-        return (duration: finalDuration, fileSize: fileSize, waveform: waveform)
+        self.targetURL = nil
+        self.targetFileName = nil
+
+        return RecordingResult(
+            url: url,
+            fileName: recordedFileName,
+            duration: finalDuration,
+            fileSize: fileSize,
+            waveform: waveform
+        )
     }
 
     private func stopRecordingCleanup() {
-        stopTimer()
-        if audioEngine.isRunning {
-            audioEngine.inputNode.removeTap(onBus: 0)
-            audioEngine.stop()
-        }
-        audioFile = nil
         isRecording = false
         isPaused = false
+        stopTimer()
+
+        if isTapInstalled {
+            audioEngine.inputNode.removeTap(onBus: 0)
+            isTapInstalled = false
+        }
+
+        if audioEngine.isRunning {
+            audioEngine.stop()
+        }
+
+        lock.lock()
+        audioFile = nil
+        recordedSamples.removeAll(keepingCapacity: false)
+        lock.unlock()
+
+        targetURL = nil
+        targetFileName = nil
         currentDuration = 0.0
+        currentAmplitude = 0.0
+        currentDBFS = -100.0
+        accumulatedDuration = 0.0
+        recordingStartTime = nil
     }
 
     private func startTimer() {

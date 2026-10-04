@@ -113,4 +113,33 @@ final class SuperHearingTests: XCTestCase {
         XCTAssertEqual(file.formattedDuration, "02:05.4")
         XCTAssertEqual(file.waveformSamples, decoded.waveformSamples)
     }
+
+    func testRecordingResultModelCreation() {
+        let tempURL = URL(fileURLWithPath: "/tmp/SuperHearing_test.caf")
+        let result = RecordingResult(
+            url: tempURL,
+            fileName: "SuperHearing_test.caf",
+            duration: 12.5,
+            fileSize: 24000,
+            waveform: [0.1, 0.4, 0.9, 0.2]
+        )
+
+        XCTAssertEqual(result.fileName, "SuperHearing_test.caf")
+        XCTAssertEqual(result.duration, 12.5)
+        XCTAssertEqual(result.fileSize, 24000)
+        XCTAssertEqual(result.waveform.count, 4)
+
+        let audioFile = AudioFile(
+            title: "Rec Oct 4, 1:23 PM",
+            createdAt: Date(),
+            duration: result.duration,
+            fileName: result.fileName,
+            fileSize: result.fileSize,
+            waveformSamples: result.waveform
+        )
+
+        XCTAssertEqual(audioFile.fileName, "SuperHearing_test.caf")
+        XCTAssertEqual(audioFile.duration, 12.5)
+        XCTAssertEqual(audioFile.waveformSamples.count, 4)
+    }
 }

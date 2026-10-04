@@ -88,16 +88,13 @@ public final class RecordingViewModel: ObservableObject {
         Task {
             do {
                 let result = try await recordingService.stopRecording()
-                let fileName = (recordingService as? RecordingService)?.value(forKey: "targetURL") as? URL
-
                 let title = "Rec \(Date().formatted(date: .abbreviated, time: .shortened))"
-                let resolvedFileName = fileName?.lastPathComponent ?? "Recording.caf"
 
-                var audioFile = AudioFile(
+                let audioFile = AudioFile(
                     title: title,
                     createdAt: Date(),
                     duration: result.duration,
-                    fileName: resolvedFileName,
+                    fileName: result.fileName,
                     fileSize: result.fileSize,
                     waveformSamples: result.waveform
                 )
