@@ -6,7 +6,7 @@
 
 ## Overview
 
-**SuperHearing** is an iOS application built for personal use with Ad Hoc self-signed distribution. It connects to any Bluetooth headset (e.g., AirPods Pro, Sony WF-1000XM5, Bose QuietComfort, or generic Bluetooth headsets), records wideband ambient audio, applies stationary noise reduction and distant speech intelligibility boosting via Apple's **Accelerate / vDSP** framework, and separates recordings into 4 distinct musical and vocal stems (**Vocals**, **Drums**, **Bass**, **Other**) using an INT8-quantized **HTDemucs** CoreML model.
+**SuperHearing** is an iOS application built for personal use with Ad Hoc self-signed distribution. It records from the iPhone microphone or any Bluetooth headset (e.g., AirPods Pro, Sony WF-1000XM5, Bose QuietComfort), applies stationary noise reduction and distant speech intelligibility boosting via Apple's **Accelerate / vDSP** framework, and separates recordings into 4 distinct musical and vocal stems (**Vocals**, **Drums**, **Bass**, **Other**) using an INT8-quantized **HTDemucs** CoreML model.
 
 ---
 
@@ -15,7 +15,7 @@
 | Component | Technology | Description |
 |---|---|---|
 | **Platform** | iOS 17.0+ | Swift 5.9+, SwiftUI, Swift Concurrency (`async/await`) |
-| **Audio Routing** | `AVAudioSession` | PlayAndRecord mode with Bluetooth HFP / A2DP priority & auto-reconnect |
+| **Audio Routing** | `AVAudioSession` | Record-screen picker: iPhone microphone or Bluetooth HFP headset. Phone mic stays selected even if a headset is connected |
 | **DSP Engine** | Apple Accelerate `vDSP` | Real FFT (1024-frame, 50% hop, Hann window), Spectral Gating, Wiener filtering |
 | **Distant Speech Boost** | Custom AGC & Limiter | Target RMS -18dBFS, 3.2kHz speech presence boost, 6.5kHz air boost, soft-knee limiter (-1dBFS) |
 | **Stem Separation** | HTDemucs v4 via CoreML | INT8 quantized weight model (~40MB), 10s chunk inference with 1s crossfade |
@@ -148,8 +148,9 @@ If you wish to build an official signed Ad Hoc / Enterprise distribution build, 
 
 ## Validation & Verification
 
-- [x] **Audio Recording**: Captures 48kHz PCM audio with route changes handled automatically.
-- [x] **Bluetooth Earbuds Priority**: Detects and binds to Bluetooth HFP / A2DP headsets.
+- [x] **Audio Recording**: Captures 48kHz PCM from the iPhone microphone or a Bluetooth headset, with route changes handled automatically.
+- [x] **iPhone Microphone**: Explicit input choice. Built-in mic is used even while a headset is paired; playback can still go out over A2DP.
+- [x] **Bluetooth Earbuds**: Optional headset mic via HFP when Headset is selected.
 - [x] **Spectral Noise Reduction**: vDSP STFT forward/inverse transforms with noise profiling, spectral gating, and Wiener filtering.
 - [x] **Distant Speech Boost**: AGC envelope follower with speech formant EQ and soft-knee peak limiting.
 - [x] **4-Stem Separation**: Chunked 10-second inference with crossfading for seamless stem generation.

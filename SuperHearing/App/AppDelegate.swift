@@ -12,11 +12,15 @@ public final class AppDelegate: NSObject, UIApplicationDelegate {
 
     private func configureAudioSession() {
         let session = AVAudioSession.sharedInstance()
+        let usePhoneMic = UserDefaults.standard.string(forKey: "audioInputSource") == AudioInputSource.builtInMicrophone.rawValue
+        let options: AVAudioSession.CategoryOptions = usePhoneMic
+            ? [.defaultToSpeaker, .allowBluetoothA2DP]
+            : [.allowBluetooth, .allowBluetoothA2DP, .defaultToSpeaker]
         do {
             try session.setCategory(
                 .playAndRecord,
                 mode: .measurement,
-                options: [.allowBluetooth, .allowBluetoothA2DP, .defaultToSpeaker]
+                options: options
             )
             try session.setPreferredSampleRate(48000.0)
             try session.setActive(true, options: .notifyOthersOnDeactivation)

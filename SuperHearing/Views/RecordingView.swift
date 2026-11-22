@@ -15,8 +15,7 @@ public struct RecordingView: View {
                     .ignoresSafeArea()
 
                 VStack(spacing: 24) {
-                    // Bluetooth Status Badge
-                    bluetoothHeader
+                    inputHeader
 
                     Spacer()
 
@@ -51,7 +50,9 @@ public struct RecordingView: View {
                     }
                 }
             }
-            .sheet(isPresented: $showingSettings) {
+            .sheet(isPresented: $showingSettings, onDismiss: {
+                viewModel.reloadInputSource()
+            }) {
                 SettingsView()
             }
             .sheet(item: $newlyRecordedFile, onDismiss: {
@@ -66,6 +67,9 @@ public struct RecordingView: View {
                     newlyRecordedFile = file
                 }
             }
+            .onAppear {
+                viewModel.reloadInputSource()
+            }
             .alert("SuperHearing", isPresented: $viewModel.showError) {
                 Button("OK", role: .cancel) {}
             } message: {
@@ -74,31 +78,53 @@ public struct RecordingView: View {
         }
     }
 
-    // MARK: - Bluetooth Header
+    // MARK: - Input Picker
 
-    private var bluetoothHeader: some View {
-        HStack(spacing: 8) {
-            Image(systemName: viewModel.bluetoothDeviceName != nil ? "headphones" : "mic.fill")
-                .foregroundColor(viewModel.bluetoothDeviceName != nil ? .blue : .secondary)
+    private var isCapturing: Bool {
+        viewModel.state == .recording || viewModel.state == .paused || viewModel.state == .processing
+    }
 
-            Text(viewModel.bluetoothDeviceName ?? "Built-in Microphone")
-                .font(.subheadline)
-                .fontWeight(.medium)
-                .foregroundColor(.primary)
+    private var inputSelection: Binding<AudioInputSource> {
+        Binding(
+            get: { viewModel.inputSource },
+            set: { viewModel.setInputSource($0) }
+        )
+    }
 
-            if viewModel.bluetoothDeviceName != nil {
-                Circle()
-                    .fill(Color.green)
-                    .frame(width: 8, height: 8)
+    private var inputStatusLine: String {
+        if viewModel.inputSource == .bluetooth && !viewModel.isBluetoothAvailable {
+            return "No headset — using iPhone mic"
+        }
+        return viewModel.activeInputName
+    }
+
+    private var inputHeader: some View {
+        VStack(spacing: 10) {
+            Picker("Microphone", selection: inputSelection) {
+                Label("iPhone Mic", systemImage: "mic.fill")
+                    .tag(AudioInputSource.builtInMicrophone)
+                Label("Headset", systemImage: "headphones")
+                    .tag(AudioInputSource.bluetooth)
+            }
+            .pickerStyle(.segmented)
+            .disabled(isCapturing)
+
+            HStack(spacing: 8) {
+                Image(systemName: viewModel.isUsingPhoneMicrophone ? "mic.fill" : "headphones")
+                    .foregroundColor(viewModel.isUsingPhoneMicrophone ? .primary : .blue)
+
+                Text(inputStatusLine)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .foregroundColor(.primary)
+
+                if !viewModel.isUsingPhoneMicrophone {
+                    Circle()
+                        .fill(Color.green)
+                        .frame(width: 8, height: 8)
+                }
             }
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
-        .background(
-            Capsule()
-                .fill(Color(.secondarySystemBackground))
-                .shadow(color: .black.opacity(0.04), radius: 4, y: 2)
-        )
     }
 
     // MARK: - Real-Time Waveform

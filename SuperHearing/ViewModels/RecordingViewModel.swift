@@ -17,6 +17,10 @@ public final class RecordingViewModel: ObservableObject {
     @Published public var currentAmplitude: Float = 0.0
     @Published public var currentDBFS: Float = -100.0
     @Published public var bluetoothDeviceName: String?
+    @Published public var inputSource: AudioInputSource = .builtInMicrophone
+    @Published public var isBluetoothAvailable: Bool = false
+    @Published public var activeInputName: String = "iPhone Microphone"
+    @Published public var isUsingPhoneMicrophone: Bool = true
     @Published public var liveWaveform: [Float] = [Float](repeating: 0.05, count: 40)
 
     // Quick settings
@@ -31,7 +35,25 @@ public final class RecordingViewModel: ObservableObject {
 
     public init(recordingService: RecordingServiceProtocol = RecordingService.shared) {
         self.recordingService = recordingService
-        self.bluetoothDeviceName = recordingService.connectedBluetoothDevice
+        syncInput()
+    }
+
+    public func setInputSource(_ source: AudioInputSource) {
+        recordingService.setInputSource(source)
+        syncInput()
+    }
+
+    public func reloadInputSource() {
+        recordingService.reloadInputPreference()
+        syncInput()
+    }
+
+    private func syncInput() {
+        inputSource = recordingService.inputSource
+        isBluetoothAvailable = recordingService.isBluetoothAvailable
+        activeInputName = recordingService.activeInputName
+        isUsingPhoneMicrophone = recordingService.isUsingPhoneMicrophone
+        bluetoothDeviceName = recordingService.connectedBluetoothDevice
     }
 
     public func toggleRecording() {
@@ -119,7 +141,7 @@ public final class RecordingViewModel: ObservableObject {
                 self.currentDuration = self.recordingService.currentDuration
                 self.currentAmplitude = self.recordingService.currentAmplitude
                 self.currentDBFS = self.recordingService.currentDBFS
-                self.bluetoothDeviceName = self.recordingService.connectedBluetoothDevice
+                self.syncInput()
 
                 // Push new sample to rolling waveform
                 var wave = self.liveWaveform

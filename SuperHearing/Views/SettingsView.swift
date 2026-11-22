@@ -48,17 +48,15 @@ public struct SettingsView: View {
                     Toggle("Auto-Separate After Processing", isOn: $viewModel.autoSeparate)
                 }
 
-                // Section 3: Bluetooth & Routing
-                Section(header: Text("Bluetooth Routing")) {
-                    Toggle("Auto-Route to Bluetooth Headset", isOn: $viewModel.autoConnectBluetooth)
-
-                    HStack {
-                        Text("Target Profile")
-                        Spacer()
-                        Text("A2DP + HFP Wideband")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
+                Section(header: Text("Microphone")) {
+                    Picker("Record From", selection: $viewModel.audioInputSource) {
+                        Text("iPhone Microphone").tag(AudioInputSource.builtInMicrophone.rawValue)
+                        Text("Bluetooth Headset").tag(AudioInputSource.bluetooth.rawValue)
                     }
+
+                    Text("iPhone Microphone records from the phone even when a headset is connected. Headset uses the earbuds' mic. If no headset is connected, recording falls back to the iPhone mic.")
+                        .font(.footnote)
+                        .foregroundColor(.secondary)
                 }
 
                 // Section 4: Storage Management

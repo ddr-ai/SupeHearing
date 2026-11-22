@@ -10,6 +10,7 @@ public final class SettingsViewModel: ObservableObject {
     @AppStorage("separationQuality") public var separationQualityRaw: String = SeparationQuality.balanced.rawValue
     @AppStorage("autoSeparate") public var autoSeparate: Bool = false
     @AppStorage("autoConnectBluetooth") public var autoConnectBluetooth: Bool = true
+    @AppStorage("audioInputSource") public var audioInputSource: String = AudioInputSource.bluetooth.rawValue
 
     @Published public var cacheSizeBytes: Int64 = 0
     @Published public var alertMessage: String?
@@ -63,6 +64,7 @@ public final class SettingsViewModel: ObservableObject {
         separationQuality = .balanced
         autoSeparate = false
         autoConnectBluetooth = true
+        audioInputSource = AudioInputSource.bluetooth.rawValue
 
         alertMessage = "Audio settings restored to defaults."
         showAlert = true

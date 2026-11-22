@@ -18,6 +18,25 @@ public struct RecordingResult: Sendable {
     }
 }
 
+public enum AudioInputSource: String, CaseIterable, Codable, Sendable {
+    case builtInMicrophone = "builtIn"
+    case bluetooth = "bluetooth"
+
+    public var displayName: String {
+        switch self {
+        case .builtInMicrophone: return "iPhone Microphone"
+        case .bluetooth: return "Bluetooth Headset"
+        }
+    }
+
+    public var shortName: String {
+        switch self {
+        case .builtInMicrophone: return "iPhone Mic"
+        case .bluetooth: return "Headset"
+        }
+    }
+}
+
 public protocol RecordingServiceProtocol: AnyObject, Sendable {
     var isRecording: Bool { get }
     var isPaused: Bool { get }
@@ -25,14 +44,20 @@ public protocol RecordingServiceProtocol: AnyObject, Sendable {
     var currentAmplitude: Float { get }
     var currentDBFS: Float { get }
     var connectedBluetoothDevice: String? { get }
+    var inputSource: AudioInputSource { get }
+    var isBluetoothAvailable: Bool { get }
+    var activeInputName: String { get }
+    var isUsingPhoneMicrophone: Bool { get }
 
+    func setInputSource(_ source: AudioInputSource)
+    func reloadInputPreference()
     func startRecording(to fileName: String) async throws
     func pauseRecording()
     func resumeRecording()
     func stopRecording() async throws -> RecordingResult
 }
 
-/// Manages audio input routing, Bluetooth device detection, and real-time audio recording via AVAudioEngine.
+/// Routes recording to the iPhone microphone or a Bluetooth headset, then captures via AVAudioEngine.
 public final class RecordingService: NSObject, RecordingServiceProtocol, @unchecked Sendable {
     public static let shared = RecordingService()
 
@@ -52,6 +77,12 @@ public final class RecordingService: NSObject, RecordingServiceProtocol, @unchec
     public private(set) var currentAmplitude: Float = 0.0
     public private(set) var currentDBFS: Float = -100.0
     public private(set) var connectedBluetoothDevice: String?
+    public private(set) var inputSource: AudioInputSource = .builtInMicrophone
+    public private(set) var isBluetoothAvailable: Bool = false
+    public private(set) var activeInputName: String = "iPhone Microphone"
+    public private(set) var isUsingPhoneMicrophone: Bool = true
+
+    private let inputSourceDefaultsKey = "audioInputSource"
 
     private var timer: Timer?
     private var recordingStartTime: Date?
@@ -59,9 +90,9 @@ public final class RecordingService: NSObject, RecordingServiceProtocol, @unchec
 
     public override init() {
         super.init()
-        setupAudioSession()
+        loadStoredInputSource()
         setupNotifications()
-        updateConnectedBluetoothDevice()
+        applyInputRoute()
     }
 
     deinit {
@@ -75,40 +106,97 @@ public final class RecordingService: NSObject, RecordingServiceProtocol, @unchec
         }
     }
 
-    // MARK: - Audio Session & Bluetooth Setup
+    // MARK: - Audio Session & Input Routing
 
-    private func setupAudioSession() {
+    private func loadStoredInputSource() {
+        if let raw = UserDefaults.standard.string(forKey: inputSourceDefaultsKey),
+           let stored = AudioInputSource(rawValue: raw) {
+            inputSource = stored
+            return
+        }
+        let preferBluetooth = UserDefaults.standard.object(forKey: "autoConnectBluetooth") as? Bool ?? true
+        inputSource = preferBluetooth ? .bluetooth : .builtInMicrophone
+        UserDefaults.standard.set(inputSource.rawValue, forKey: inputSourceDefaultsKey)
+    }
+
+    public func reloadInputPreference() {
+        guard !isRecording else { return }
+        loadStoredInputSource()
+        applyInputRoute()
+    }
+
+    public func setInputSource(_ source: AudioInputSource) {
+        guard !isRecording else { return }
+        inputSource = source
+        UserDefaults.standard.set(source.rawValue, forKey: inputSourceDefaultsKey)
+        applyInputRoute()
+    }
+
+    private func isBluetoothPort(_ port: AVAudioSessionPortDescription) -> Bool {
+        port.portType == .bluetoothHFP || port.portType == .bluetoothA2DP || port.portType == .bluetoothLE
+    }
+
+    /// Phone mic drops the HFP option so a connected headset cannot take the input.
+    /// Headset mode turns HFP back on and selects that port.
+    private func applyInputRoute() {
         let session = AVAudioSession.sharedInstance()
+        let inputs = session.availableInputs ?? []
+        let bluetoothInput = inputs.first(where: { isBluetoothPort($0) })
+        let builtInInput = inputs.first(where: { $0.portType == .builtInMic })
+        isBluetoothAvailable = bluetoothInput != nil
+
+        let useBluetooth = inputSource == .bluetooth && bluetoothInput != nil
+
         do {
-            try session.setCategory(
-                .playAndRecord,
-                mode: .measurement,
-                options: [.allowBluetooth, .allowBluetoothA2DP, .defaultToSpeaker]
-            )
             try session.setPreferredSampleRate(48000.0)
+            if useBluetooth, let bluetoothInput {
+                try session.setCategory(
+                    .playAndRecord,
+                    mode: .measurement,
+                    options: [.allowBluetooth, .allowBluetoothA2DP, .defaultToSpeaker]
+                )
+                try session.setPreferredInput(bluetoothInput)
+                connectedBluetoothDevice = bluetoothInput.portName
+                activeInputName = bluetoothInput.portName
+                isUsingPhoneMicrophone = false
+            } else {
+                try session.setCategory(
+                    .playAndRecord,
+                    mode: .measurement,
+                    options: [.defaultToSpeaker, .allowBluetoothA2DP]
+                )
+                if let builtInInput {
+                    if let sources = builtInInput.dataSources, !sources.isEmpty {
+                        let preferred = sources.first(where: { $0.orientation == .bottom })
+                            ?? sources.first(where: { $0.orientation == .front })
+                            ?? sources.first
+                        if let preferred {
+                            try builtInInput.setPreferredDataSource(preferred)
+                        }
+                    }
+                    try session.setPreferredInput(builtInInput)
+                    activeInputName = builtInInput.portName
+                } else {
+                    try session.setPreferredInput(nil)
+                    activeInputName = "iPhone Microphone"
+                }
+                connectedBluetoothDevice = nil
+                isUsingPhoneMicrophone = true
+            }
             try session.setActive(true, options: .notifyOthersOnDeactivation)
-            routeToBluetoothIfAvailable()
         } catch {
-            print("[RecordingService] AudioSession setup error: \(error.localizedDescription)")
+            print("[RecordingService] Audio route error: \(error.localizedDescription)")
         }
     }
 
-    private func routeToBluetoothIfAvailable() {
-        let session = AVAudioSession.sharedInstance()
-        guard let inputs = session.availableInputs else { return }
-
-        // Find Bluetooth HFP / A2DP input
-        if let bluetoothInput = inputs.first(where: {
-            $0.portType == .bluetoothHFP || $0.portType == .bluetoothA2DP || $0.portType == .bluetoothLE
-        }) {
-            do {
-                try session.setPreferredInput(bluetoothInput)
-                connectedBluetoothDevice = bluetoothInput.portName
-            } catch {
-                print("[RecordingService] Failed to set preferred Bluetooth input: \(error)")
-            }
-        } else {
-            connectedBluetoothDevice = nil
+    private func ensureMicrophonePermission() async throws {
+        let granted = await AVAudioApplication.requestRecordPermission()
+        guard granted else {
+            throw NSError(
+                domain: "SuperHearing",
+                code: 3,
+                userInfo: [NSLocalizedDescriptionKey: "Microphone access is required to record with the iPhone microphone."]
+            )
         }
     }
 
@@ -129,7 +217,11 @@ public final class RecordingService: NSObject, RecordingServiceProtocol, @unchec
 
     @objc private func handleRouteChange(notification: Notification) {
         Task { @MainActor in
-            self.updateConnectedBluetoothDevice()
+            if self.isRecording {
+                self.refreshInputAvailability()
+            } else {
+                self.applyInputRoute()
+            }
         }
     }
 
@@ -152,6 +244,23 @@ public final class RecordingService: NSObject, RecordingServiceProtocol, @unchec
         }
     }
 
+    private func refreshInputAvailability() {
+        let session = AVAudioSession.sharedInstance()
+        let inputs = session.availableInputs ?? []
+        isBluetoothAvailable = inputs.contains(where: { isBluetoothPort($0) })
+        if isUsingPhoneMicrophone {
+            if let builtIn = session.currentRoute.inputs.first(where: { $0.portType == .builtInMic }) {
+                activeInputName = builtIn.portName
+            }
+            connectedBluetoothDevice = nil
+        } else {
+            updateConnectedBluetoothDevice()
+            if let name = connectedBluetoothDevice {
+                activeInputName = name
+            }
+        }
+    }
+
     private func updateConnectedBluetoothDevice() {
         let session = AVAudioSession.sharedInstance()
         for input in session.currentRoute.inputs {
@@ -166,10 +275,10 @@ public final class RecordingService: NSObject, RecordingServiceProtocol, @unchec
     // MARK: - Recording Actions
 
     public func startRecording(to fileName: String) async throws {
+        try await ensureMicrophonePermission()
         stopRecordingCleanup()
 
-        setupAudioSession()
-        routeToBluetoothIfAvailable()
+        applyInputRoute()
 
         let fileURL = AudioFile.recordingsDirectory.appendingPathComponent(fileName)
         fileURL.removeIfExisting()
