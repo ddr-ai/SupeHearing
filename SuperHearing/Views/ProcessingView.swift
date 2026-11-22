@@ -44,8 +44,14 @@ public struct ProcessingView: View {
                 }
                 .padding(.vertical)
             }
-            .navigationTitle("Noise Reduction & Enhance")
+            .navigationTitle(viewModel.voiceIsolationEnabled ? "Voice Isolation" : "Noise Reduction & Enhance")
             .navigationBarTitleDisplayMode(.inline)
+            .onChange(of: viewModel.voiceIsolationEnabled) { _, newValue in
+                UserDefaults.standard.set(newValue, forKey: "voiceIsolationEnabled")
+            }
+            .onChange(of: viewModel.voiceIsolationStrength) { _, newValue in
+                UserDefaults.standard.set(Double(newValue), forKey: "voiceIsolationStrength")
+            }
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Close") {
@@ -139,18 +145,49 @@ public struct ProcessingView: View {
             Text("Enhancement Parameters")
                 .font(.headline)
 
-            VStack(alignment: .leading, spacing: 8) {
-                HStack {
-                    Text("Noise Reduction Strength")
-                    Spacer()
-                    Text(String(format: "%.1f x", viewModel.nrStrength))
-                        .fontWeight(.semibold)
-                        .foregroundColor(.blue)
+            Toggle(isOn: $viewModel.voiceIsolationEnabled) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Voice Isolation")
+                    Text("Keeps speech and turns down background. Does not pull one person out of a group talking at once.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
                 }
-                Slider(value: $viewModel.nrStrength, in: 0.5...3.0, step: 0.1)
-                Text("Higher values remove more stationary background hum, air conditioning, and fan noise.")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+            }
+
+            if viewModel.voiceIsolationEnabled {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text("Isolation Strength")
+                        Spacer()
+                        Text(String(format: "%.0f%%", viewModel.voiceIsolationStrength * 100))
+                            .fontWeight(.semibold)
+                            .foregroundColor(.green)
+                    }
+                    Slider(value: $viewModel.voiceIsolationStrength, in: 0.35...1.0, step: 0.05)
+                }
+            } else {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text("Noise Reduction Strength")
+                        Spacer()
+                        Text(String(format: "%.1f x", viewModel.nrStrength))
+                            .fontWeight(.semibold)
+                            .foregroundColor(.blue)
+                    }
+                    Slider(value: $viewModel.nrStrength, in: 0.5...3.0, step: 0.1)
+                    Text("Higher values remove more stationary background hum, air conditioning, and fan noise.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+
+                Toggle(isOn: $viewModel.useWienerFilter) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Wiener Filter Mode")
+                        Text("Minimizes musical chirping artifacts using statistical SNR estimation.")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
             }
 
             Divider()
@@ -164,21 +201,11 @@ public struct ProcessingView: View {
                         .foregroundColor(.purple)
                 }
                 Slider(value: $viewModel.enhancementIntensity, in: 0.5...2.0, step: 0.1)
-                Text("Amplifies low-energy distant speech formants (2-6 kHz) and applies AGC compression.")
+                Text("Brings the isolated voice up to a steady level. Lower this if the result sounds pumped.")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
 
-            Divider()
-
-            Toggle(isOn: $viewModel.useWienerFilter) {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Wiener Filter Mode")
-                    Text("Minimizes musical chirping artifacts using statistical SNR estimation.")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-            }
         }
         .glassCard()
         .padding(.horizontal)

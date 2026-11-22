@@ -2,6 +2,7 @@ import SwiftUI
 
 public struct RecordingView: View {
     @StateObject private var viewModel = RecordingViewModel()
+    @AppStorage("voiceIsolationEnabled") private var voiceIsolationEnabled: Bool = true
     @State private var showingSettings = false
     @State private var showingProcessedSheet = false
     @State private var newlyRecordedFile: AudioFile?
@@ -209,7 +210,15 @@ public struct RecordingView: View {
     // MARK: - Quick Toggles
 
     private var quickTogglesSection: some View {
-        HStack(spacing: 16) {
+        VStack(spacing: 12) {
+            Toggle(isOn: $voiceIsolationEnabled) {
+                Label("Voice Isolation", systemImage: "person.wave.2")
+                    .font(.footnote)
+            }
+            .toggleStyle(.button)
+            .tint(.green)
+
+            HStack(spacing: 16) {
             Toggle(isOn: $viewModel.autoNoiseReduction) {
                 Label("Auto Noise Reduction", systemImage: "waveform.badge.minus")
                     .font(.footnote)
@@ -223,6 +232,7 @@ public struct RecordingView: View {
             }
             .toggleStyle(.button)
             .tint(.purple)
+            }
         }
     }
 

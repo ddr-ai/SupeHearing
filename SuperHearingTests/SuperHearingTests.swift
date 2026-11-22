@@ -114,6 +114,45 @@ final class SuperHearingTests: XCTestCase {
         XCTAssertEqual(file.waveformSamples, decoded.waveformSamples)
     }
 
+    func testVoiceIsolationDropsNoiseAndKeepsHarmonics() {
+        let sampleRate: Float = 48000
+        let total = 48000
+        var mix = [Float](repeating: 0, count: total)
+        var state: UInt32 = 0x12345678
+
+        for i in 0..<total {
+            state ^= state << 13
+            state ^= state >> 17
+            state ^= state << 5
+            let white = (Float(state % 10000) / 5000) - 1
+            let t = Float(i) / sampleRate
+            if i < total / 2 {
+                mix[i] = white * 0.45
+            } else {
+                mix[i] = 0.45 * sin(2 * Float.pi * 180 * t)
+                    + 0.28 * sin(2 * Float.pi * 360 * t)
+                    + 0.16 * sin(2 * Float.pi * 540 * t)
+                    + 0.08 * sin(2 * Float.pi * 720 * t)
+            }
+        }
+
+        let isolated = VoiceIsolationService.shared.isolate(samples: mix, sampleRate: sampleRate, strength: 1)
+        XCTAssertEqual(isolated.count, total)
+
+        func rms(_ range: Range<Int>) -> Float {
+            var sum: Float = 0
+            for i in range {
+                sum += isolated[i] * isolated[i]
+            }
+            return sqrt(sum / Float(range.count))
+        }
+
+        let noiseRMS = rms(5000..<20000)
+        let voiceRMS = rms(28000..<44000)
+        XCTAssertGreaterThan(voiceRMS, 0.05, "Voiced section should survive isolation")
+        XCTAssertLessThan(noiseRMS, voiceRMS * 0.45, "Noise-only section should be much quieter than the voice")
+    }
+
     func testRecordingResultModelCreation() {
         let tempURL = URL(fileURLWithPath: "/tmp/SuperHearing_test.caf")
         let result = RecordingResult(

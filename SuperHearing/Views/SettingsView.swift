@@ -48,6 +48,13 @@ public struct SettingsView: View {
                     Toggle("Auto-Separate After Processing", isOn: $viewModel.autoSeparate)
                 }
 
+                Section(header: Text("Voice Isolation")) {
+                    Toggle("Isolate Voice When Processing", isOn: $viewModel.voiceIsolationEnabled)
+                    Text("Turns down sound that is not speech. It will not separate two voices from each other.")
+                        .font(.footnote)
+                        .foregroundColor(.secondary)
+                }
+
                 Section(header: Text("Microphone")) {
                     Picker("Record From", selection: $viewModel.audioInputSource) {
                         Text("iPhone Microphone").tag(AudioInputSource.builtInMicrophone.rawValue)

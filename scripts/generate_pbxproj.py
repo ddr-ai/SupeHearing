@@ -59,6 +59,7 @@ def main():
         ("SuperHearing/Services", "RecordingService.swift", "app"),
         ("SuperHearing/Services", "NoiseReductionService.swift", "app"),
         ("SuperHearing/Services", "EnhancementService.swift", "app"),
+        ("SuperHearing/Services", "VoiceIsolationService.swift", "app"),
         ("SuperHearing/Services", "SeparationService.swift", "app"),
         ("SuperHearing/Services", "PlaybackService.swift", "app"),
         ("SuperHearing/Utilities", "AudioBuffer.swift", "app"),

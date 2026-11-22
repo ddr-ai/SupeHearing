@@ -28,6 +28,7 @@
 		F9202511475645D0F4865975 /* RecordingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88875A11625C6AF94806E52 /* RecordingService.swift */; };
 		859B0775EF70BB717A8F2197 /* NoiseReductionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F47FE1A15ABA7D7353E6A72E /* NoiseReductionService.swift */; };
 		20B72EE24EBBA41E5B0A3D9A /* EnhancementService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F851BF0C65D8E14E02F8D5 /* EnhancementService.swift */; };
+		ABB2C18C83389E7F1B452E24 /* VoiceIsolationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A774EE6643F894537AA11C3 /* VoiceIsolationService.swift */; };
 		E2C8568274761F63930DD0AE /* SeparationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF0F8C64F809BEE41FDF483 /* SeparationService.swift */; };
 		7441E3EB879EF0A6C0F4CCD6 /* PlaybackService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98AB8A3D8AF2AB756DD73299 /* PlaybackService.swift */; };
 		2BCEC6FF2801AEA696E273A9 /* AudioBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512B128B53C7CE0030783AB1 /* AudioBuffer.swift */; };
@@ -64,6 +65,7 @@
 		E88875A11625C6AF94806E52 /* RecordingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingService.swift; sourceTree = "<group>"; };
 		F47FE1A15ABA7D7353E6A72E /* NoiseReductionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoiseReductionService.swift; sourceTree = "<group>"; };
 		52F851BF0C65D8E14E02F8D5 /* EnhancementService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnhancementService.swift; sourceTree = "<group>"; };
+		7A774EE6643F894537AA11C3 /* VoiceIsolationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceIsolationService.swift; sourceTree = "<group>"; };
 		4BF0F8C64F809BEE41FDF483 /* SeparationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeparationService.swift; sourceTree = "<group>"; };
 		98AB8A3D8AF2AB756DD73299 /* PlaybackService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackService.swift; sourceTree = "<group>"; };
 		512B128B53C7CE0030783AB1 /* AudioBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioBuffer.swift; sourceTree = "<group>"; };
@@ -155,6 +157,7 @@
 				E88875A11625C6AF94806E52 /* RecordingService.swift */,
 				F47FE1A15ABA7D7353E6A72E /* NoiseReductionService.swift */,
 				52F851BF0C65D8E14E02F8D5 /* EnhancementService.swift */,
+				7A774EE6643F894537AA11C3 /* VoiceIsolationService.swift */,
 				4BF0F8C64F809BEE41FDF483 /* SeparationService.swift */,
 				98AB8A3D8AF2AB756DD73299 /* PlaybackService.swift */,
 			);
@@ -384,6 +387,7 @@
 				F9202511475645D0F4865975 /* RecordingService.swift in Sources */,
 				859B0775EF70BB717A8F2197 /* NoiseReductionService.swift in Sources */,
 				20B72EE24EBBA41E5B0A3D9A /* EnhancementService.swift in Sources */,
+				ABB2C18C83389E7F1B452E24 /* VoiceIsolationService.swift in Sources */,
 				E2C8568274761F63930DD0AE /* SeparationService.swift in Sources */,
 				7441E3EB879EF0A6C0F4CCD6 /* PlaybackService.swift in Sources */,
 				2BCEC6FF2801AEA696E273A9 /* AudioBuffer.swift in Sources */,

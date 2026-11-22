@@ -4,9 +4,10 @@ import Combine
 
 public enum ProcessingStage: String {
     case idle = "Ready to process"
+    case isolatingVoice = "Isolating voice from background…"
     case analyzingNoise = "Analyzing stationary noise floor…"
     case reducingNoise = "Applying vDSP spectral gating…"
-    case enhancingSpeech = "Enhancing distant speech & dynamics…"
+    case enhancingSpeech = "Enhancing speech level…"
     case saving = "Finalizing clean master file…"
     case completed = "Processing Complete"
     case failed = "Processing Failed"
@@ -29,6 +30,8 @@ public final class ProcessingViewModel: ObservableObject {
     @Published public var nrStrength: Float = 1.5
     @Published public var enhancementIntensity: Float = 1.0
     @Published public var useWienerFilter: Bool = true
+    @Published public var voiceIsolationEnabled: Bool = true
+    @Published public var voiceIsolationStrength: Float = 0.8
 
     // A/B Comparison Playback
     @Published public var activeABTrack: ABComparisonTrack = .processed
@@ -44,6 +47,12 @@ public final class ProcessingViewModel: ObservableObject {
     public init(audioFile: AudioFile) {
         self.audioFile = audioFile
         self.processedFileURL = audioFile.processedURL
+        if UserDefaults.standard.object(forKey: "voiceIsolationEnabled") != nil {
+            voiceIsolationEnabled = UserDefaults.standard.bool(forKey: "voiceIsolationEnabled")
+        }
+        if UserDefaults.standard.object(forKey: "voiceIsolationStrength") != nil {
+            voiceIsolationStrength = Float(UserDefaults.standard.double(forKey: "voiceIsolationStrength"))
+        }
     }
 
     public var canCompare: Bool {
@@ -59,38 +68,61 @@ public final class ProcessingViewModel: ObservableObject {
         let inputURL = audioFile.fileURL
         let processedName = "Processed_\(audioFile.fileName)"
         let outputURL = AudioFile.recordingsDirectory.appendingPathComponent(processedName)
+        let isolateVoice = voiceIsolationEnabled
+        let isolationStrength = voiceIsolationStrength
+        UserDefaults.standard.set(isolateVoice, forKey: "voiceIsolationEnabled")
+        UserDefaults.standard.set(Double(isolationStrength), forKey: "voiceIsolationStrength")
 
         processingTask = Task {
             do {
-                // Step 1: Spectral Noise Reduction
-                self.stage = .reducingNoise
-                let intermediateURL = AudioFile.recordingsDirectory.appendingPathComponent("temp_nr_\(audioFile.fileName)")
+                var currentURL = inputURL
+                var tempURL: URL?
 
-                try await NoiseReductionService.shared.reduceNoise(
-                    inputURL: inputURL,
-                    outputURL: intermediateURL,
-                    strength: self.nrStrength,
-                    useWiener: self.useWienerFilter
-                ) { [weak self] p in
-                    Task { @MainActor [weak self] in
-                        self?.progress = p * 0.5
+                if isolateVoice {
+                    self.stage = .isolatingVoice
+                    let isolatedURL = AudioFile.recordingsDirectory.appendingPathComponent("temp_voice_\(audioFile.fileName)")
+                    tempURL = isolatedURL
+                    try await VoiceIsolationService.shared.isolateVoice(
+                        inputURL: inputURL,
+                        outputURL: isolatedURL,
+                        strength: isolationStrength
+                    ) { [weak self] p in
+                        Task { @MainActor [weak self] in
+                            self?.progress = p * 0.7
+                        }
                     }
+                    currentURL = isolatedURL
+                } else {
+                    self.stage = .reducingNoise
+                    let intermediateURL = AudioFile.recordingsDirectory.appendingPathComponent("temp_nr_\(audioFile.fileName)")
+                    tempURL = intermediateURL
+                    try await NoiseReductionService.shared.reduceNoise(
+                        inputURL: inputURL,
+                        outputURL: intermediateURL,
+                        strength: self.nrStrength,
+                        useWiener: self.useWienerFilter
+                    ) { [weak self] p in
+                        Task { @MainActor [weak self] in
+                            self?.progress = p * 0.5
+                        }
+                    }
+                    currentURL = intermediateURL
                 }
 
-                // Step 2: Distant Speech Enhancement
                 self.stage = .enhancingSpeech
                 try await EnhancementService.shared.enhanceAudio(
-                    inputURL: intermediateURL,
+                    inputURL: currentURL,
                     outputURL: outputURL,
                     intensity: self.enhancementIntensity
                 ) { [weak self] p in
                     Task { @MainActor [weak self] in
-                        self?.progress = 0.5 + p * 0.45
+                        let start = isolateVoice ? 0.7 : 0.5
+                        let span = isolateVoice ? 0.25 : 0.45
+                        self?.progress = start + p * span
                     }
                 }
 
-                // Cleanup intermediate file
-                intermediateURL.removeIfExisting()
+                tempURL?.removeIfExisting()
 
                 self.stage = .saving
                 self.progress = 0.98
